@@ -11,7 +11,7 @@ Bem-vindo ao **Cardápio Digital**! Este é um projeto de cardápio digital para
 
 ## 🖼️ Preview
 
-![Logo El Geladon](src/assets/logo.svg)
+<img src="src/assets/logo.svg" alt="Logo El Geladon" width="120" />
 
 ## 📂 Estrutura do Projeto
 
