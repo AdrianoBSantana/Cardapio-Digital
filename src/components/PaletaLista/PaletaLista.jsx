@@ -1,54 +1,50 @@
-import React, {useState} from 'react' 
-import "./PaletaLista.css"
-import { paletas } from "../../mocks/paletas"
-import PaletaItem from 'components/PaletaItem/PaletaItem'
+import React, { useState, useEffect } from 'react';
+import "./PaletaLista.css";
+import PaletaItem from 'components/PaletaItem/PaletaItem';
+import { PaletaService } from 'services/PaletaService';
 
-console.log("paletas", paletas)
+function PaletaLista() {
+  const [paletas, setPaletas] = useState([]);
+  const [paletaSelecionadas, setPaletaSelecionadas] = useState({});
 
-function PaletaLista(){
+  const getLista = async () => {
+    const response = await PaletaService.getLista();
+    setPaletas(response);
+  };
 
+  const adicionarItem = (paletaId) => {
+    const paleta = { [paletaId]: (paletaSelecionadas[paletaId] || 0) + 1 };
+    setPaletaSelecionadas({ ...paletaSelecionadas, ...paleta });
+  };
 
-    
-    const [paletaSelecionadas, setPaletaSelecionadas ] = useState({})
-
-   
-
-    function adicionarItem(index){
-        
-        const initialValue = Number(paletaSelecionadas[index] || 0) 
-       
-        const paleta = {
-            [index]: initialValue + 1
-        }
-       .
-        setPaletaSelecionadas({...paletaSelecionadas, ...paleta})
+  const removerItem = (paletaId) => {
+    const paleta = { [paletaId]: paletaSelecionadas[paletaId] - 1 };
+    if (paleta[paletaId] < 1) {
+      delete paletaSelecionadas[paletaId];
+      setPaletaSelecionadas({ ...paletaSelecionadas });
+    } else {
+      setPaletaSelecionadas({ ...paletaSelecionadas, ...paleta });
     }
+  };
 
-    function removerItem(index){
-        const initialValue = Number(paletaSelecionadas[index] || 0) 
-        
-        const paleta = {
-            [index]: initialValue - 1
-        }
-       
-        setPaletaSelecionadas({...paletaSelecionadas, ...paleta})
-    }
+  useEffect(() => {
+    getLista();
+  }, []);
 
-    return(
-        <div className="PaletaLista"> 
-        {}
-        {paletas.map((paleta, index)=> {
-            return (
-                <PaletaItem key={index} 
-                    adicionarItem={adicionarItem} 
-                    removerItem={removerItem}
-                    quantidadeSelecionada={paletaSelecionadas[index]}
-                    index={index}
-                    paleta={paleta}
-                />
-        )})}
-        </div>
-    )
+  return (
+    <div className="PaletaLista">
+      {paletas.map((paleta) => {
+        return (
+          <PaletaItem
+            key={paleta.id}
+            paleta={paleta}
+            quantidadeSelecionada={paletaSelecionadas[paleta.id]}
+            adicionarItem={adicionarItem}
+            removerItem={removerItem}
+          />
+        );
+      })}
+    </div>
+  );
 }
-
 export default PaletaLista
